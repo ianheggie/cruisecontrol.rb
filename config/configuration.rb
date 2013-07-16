@@ -17,7 +17,8 @@ class Configuration
     attr_accessor :default_polling_interval, :disable_admin_ui, :email_from,
                   :dashboard_refresh_interval, :serialize_builds,
                   :serialized_build_timeout, :git_load_new_changesets_timeout,
-                  :disable_code_browsing, :build_history_limit, :max_file_display_length
+                  :disable_code_browsing, :build_history_limit, :max_file_display_length,
+                  :ruby_interpreter
     attr_reader :dashboard_url
 
     # non-published configuration options (obscure stuff, mostly useful for http://cruisecontrolrb.thoughtworks.com)

@@ -37,8 +37,13 @@ module Platform
   module_function :prompt
 
   def interpreter
-    return File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']) unless defined?(JRUBY_VERSION)
-    "#{Rails.root}/script/jruby"
+    if (defined?(Configuration.ruby_interpreter))
+      Configuration.ruby_interpreter
+    elsif (defined?(JRUBY_VERSION))
+      "#{Rails.root}/script/jruby"
+    else 
+      File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])
+    end
   end
   module_function :interpreter
 
