@@ -37,7 +37,7 @@ module Platform
   module_function :prompt
 
   def interpreter
-    if (defined?(Configuration.ruby_interpreter))
+    if (!Configuration.ruby_interpreter.nil?)
       Configuration.ruby_interpreter
     elsif (defined?(JRUBY_VERSION))
       "#{Rails.root}/script/jruby"
