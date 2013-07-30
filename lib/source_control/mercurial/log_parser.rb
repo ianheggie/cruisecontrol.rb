@@ -52,7 +52,7 @@ module SourceControl
 
       def split_log(message)
         message = message.join("\n") if message.is_a? Array
-        message.split(/^\s+$/).delete_if {|t| t =~ /^\s+$/ }.map(&:strip)
+        message.split(/\n\s+\n(?=changeset:\s+\d+:)/m).delete_if {|t| t =~ /^\s+$/ }.map(&:strip)
       end
 
     end
