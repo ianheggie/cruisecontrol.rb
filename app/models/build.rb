@@ -75,13 +75,21 @@ EOF
   end
 
   def generate_release_note(from_revision , to_revision)
-    release_note_log = artifact('release_note.log')
-    release_note_log_path = release_note_log.expand_path.to_s
+    return process_release_note('release_note.log', 'RELEASE_NOTE_FROM' => from_revision, 'RELEASE_NOTE_TO' => to_revision)
+  end
+
+  def add_release_label(to_revision , label)
+    return false if ( to_revision.nil? or label.to_s.strip.empty? )
+    return process_release_note('release_label.log', 'RELEASE_REVISION' => to_revision, 'RELEASE_LABEL' => label)
+  end
+
+  def process_release_note(release_log_name, set_envs = {})
+    release_log = artifact(release_log_name)
+    release_log_path = release_log.expand_path.to_s
     begin
       in_clean_environment_on_local_copy do
-        ENV['RELEASE_NOTE_FROM'] = from_revision 
-        ENV['RELEASE_NOTE_TO'] = to_revision
-        execute "rake send_release_note --TRACE" , :stdout => release_note_log_path, :stderr => release_note_log_path, :env => project.environment
+        set_envs.each {|name, value| ENV[name] = value }
+        execute 'rake add_release_tag --TRACE', :stdout => release_log_path, :stderr => release_log_path, :env => project.environment
         return true
       end
     rescue => e
@@ -90,23 +98,6 @@ EOF
     end
   end
 
-  def add_release_label(to_revision , label)
-    return false if ( to_revision.nil? or label.to_s.strip.empty? )
-    release_label_log = artifact('release_label.log')
-    release_label_log_path = release_label_log.expand_path.to_s
-    begin
-      in_clean_environment_on_local_copy do
-        ENV['RELEASE_REVISION'] = to_revision 
-        ENV['RELEASE_LABEL'] = label
-        execute "rake add_release_tag --TRACE" , :stdout => release_label_log_path, :stderr => release_label_log_path, :env => project.environment
-        return true
-      end
-    rescue => e
-      CruiseControl::Log.verbose? ? CruiseControl::Log.debug(e) : CruiseControl::Log.info(e.message)
-      return false
-    end
-  end
-  
   def brief_error
     return error unless error.blank?
     return "plugin error" unless plugin_errors.empty?
