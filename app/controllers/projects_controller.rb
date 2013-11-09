@@ -51,15 +51,7 @@ class ProjectsController < ApplicationController
 
     @project.request_build rescue nil
 
-    respond_to do |format|
-      format.html do
-        if request.xhr?
-          render_projects_partial(Project.all)
-        else
-          redirect_to :controller => "builds", :action => "show", :project => @project
-        end
-      end
-    end
+    show_projects
   end
 
   def release_note
@@ -68,15 +60,7 @@ class ProjectsController < ApplicationController
 
     @project.generate_release_note(params[:from], params[:to], params[:message], params[:email], params[:release_label] ) rescue nil
 
-    respond_to do |format| 
-      format.html do
-        if request.xhr?
-          render_projects_partial(Project.all)
-        else
-          redirect_to :controller => "builds", :action => "show", :project => @project
-        end
-      end
-    end
+    show_projects
   end
 
   def kill_build
@@ -156,4 +140,16 @@ class ProjectsController < ApplicationController
       return unless CruiseControl::Configuration.disable_add_project
       render :text => 'Build requests are not allowed', :status => :forbidden
     end
-end
+
+    def show_projects
+      respond_to do |format|
+        format.html do
+          if request.xhr?
+            render_projects_partial(Project.all)
+          else
+            redirect_to :controller => "builds", :action => "show", :project => @project
+          end
+        end
+      end
+    end
+  end
