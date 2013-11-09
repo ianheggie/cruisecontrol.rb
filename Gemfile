@@ -17,7 +17,7 @@ gem 'thin'
 group :development do
   gem "mocha", :require => false #, "0.9.12", :require => false
   gem "rack-test", :require => "rack/test"
-  gem 'coveralls', :require => false
+  gem 'coveralls', :require => false ,:platforms => :ruby_19
 end
 
 platform :jruby do
@@ -33,7 +33,7 @@ end
 group :test do
   gem 'debugger', :platforms => :ruby_19
   gem "rcov", "0.9.9", :platforms => :mri_18
-  #gem "simplecov", ">= 0", :require => false, :platforms => :ruby_19
+  gem "simplecov", ">= 0", :require => false, :platforms => :ruby_19
 end
 
 gem 'system_timer', :platforms => :ruby_18
