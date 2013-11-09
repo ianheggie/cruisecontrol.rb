@@ -33,7 +33,7 @@ end
 group :test do
   gem 'debugger', :platforms => :ruby_19
   gem "rcov", "0.9.9", :platforms => :mri_18
-  gem "simplecov", ">= 0", :require => false, :platforms => :ruby_19
+  #gem "simplecov", ">= 0", :require => false, :platforms => :ruby_19
 end
 
 gem 'system_timer', :platforms => :ruby_18
