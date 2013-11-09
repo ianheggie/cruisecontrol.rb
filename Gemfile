@@ -17,7 +17,7 @@ gem 'thin'
 group :development do
   gem "mocha", :require => false #, "0.9.12", :require => false
   gem "rack-test", :require => "rack/test"
-  gem 'coveralls', require => :false
+  gem 'coveralls', :require => :false
 end
 
 platform :jruby do
