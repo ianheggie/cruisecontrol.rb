@@ -8,6 +8,11 @@ CruiseControl::Application.configure do
   config.action_controller.perform_caching = true
   config.active_support.deprecation = :notify
 
+  # Basic authentication
+  config.middleware.insert_after(::Rack::Lock, "::Rack::Auth::Basic", "CruiseControl") do |u, p|
+    [u, p] == [ENV['CRUISE_HTTP_USER'], ENV['CRUISE_HTTP_PASSWORD']]
+  end
+
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
