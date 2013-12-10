@@ -11,6 +11,8 @@ CruiseControl::Application.configure do
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
+  config.action_mailer.delivery_method = :ses
+
   config.after_initialize do
     ProjectsMigration.new.migrate_data_if_needed
     CruiseControl.require_site_config_if_needed

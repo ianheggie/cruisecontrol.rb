@@ -467,6 +467,8 @@ class Project
       begin
         plugin.send(event, *event_parameters) if plugin.respond_to? event
       rescue => plugin_error
+        puts "plugin error: #{plugin_error.message}"
+        puts plugin_error.backtrace
         CruiseControl::Log.error(plugin_error)
         if (event_parameters.first and event_parameters.first.respond_to? :artifacts_directory)
           plugin_errors_log = File.join(event_parameters.first.artifacts_directory, 'plugin_errors.log')

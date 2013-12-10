@@ -35,3 +35,4 @@ group :test do
 end
 
 gem 'system_timer', :platforms => :ruby_18
+gem "aws-ses", "~> 0.5.0", :require => 'aws/ses'
