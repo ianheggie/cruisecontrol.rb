@@ -3,7 +3,7 @@ class ProjectsController < ApplicationController
 
   before_filter :disable_build_triggers, :only => [:build, :kill_build]
   before_filter :disable_add_project, :only => :create
-  
+
   def index
     @projects = Project.all
 
@@ -68,7 +68,7 @@ class ProjectsController < ApplicationController
 
     @project.generate_release_note(params[:from], params[:to], params[:message], params[:email], params[:release_label] ) rescue nil
 
-    respond_to do |format| 
+    respond_to do |format|
       format.html do
         if request.xhr?
           render_projects_partial(Project.all)
@@ -126,6 +126,7 @@ class ProjectsController < ApplicationController
     render :text => "Project #{params[:id].inspect} not found", :status => 404 and return unless @project
 
     path = File.join(@project.path, 'work', params[:path])
+
     @line = params[:line].to_i if params[:line]
 
     if File.directory?(path)
@@ -133,7 +134,13 @@ class ProjectsController < ApplicationController
     elsif File.file?(path)
       @content = File.read(path)
     else
-      render_not_found
+      # try adding the format to the path in case the filename has an extension
+      path += '.' + params[:format]
+      if File.file?(path)
+        @content = File.read(path)
+      else
+        render_not_found
+      end
     end
   end
 
@@ -151,7 +158,7 @@ class ProjectsController < ApplicationController
     def project_to_attributes(project)
       { 'name' => project.name }
     end
-    
+
     def disable_add_project
       return unless CruiseControl::Configuration.disable_add_project
       render :text => 'Build requests are not allowed', :status => :forbidden
