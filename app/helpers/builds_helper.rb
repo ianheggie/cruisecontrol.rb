@@ -34,7 +34,7 @@ module BuildsHelper
   end
 
   def format_build_log(log)
-    highlight_test_count(link_to_code(convert_ansi_colors(log.html_safe)))
+    highlight_test_count(link_to_code(convert_ansi_colors(html_escape(log))))
   end
 
   def link_to_changeset
