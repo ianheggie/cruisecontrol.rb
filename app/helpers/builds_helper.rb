@@ -36,7 +36,7 @@ module BuildsHelper
   def format_build_log(log)
     highlight_test_count(link_to_code(convert_ansi_colors(log.html_safe)))
   end
-  
+
   def link_to_changeset
     if review_changeset_url = CruiseControl::Configuration.review_changeset_url
       content_tag('p') do
@@ -61,7 +61,7 @@ module BuildsHelper
       else
         match
       end
-    end
+    end.html_safe
   end
 
   def format_project_settings(settings)
@@ -110,13 +110,13 @@ module BuildsHelper
       result_text.html_safe
     end
   end
-  
+
   def coverage_icon(build)
     coverage = build.coverage
     coverage_text = coverage ? format_percent(coverage) : ''
     content_tag('div', coverage_text, :class => "coverage_icon coverage_#{coverage_status(coverage)}")
   end
-  
+
   def coverage_status_icon(build)
     if coverage = build.coverage
       image_tag("coverage_#{coverage_status(coverage)}.png", :class => 'coverage_icon')
@@ -129,15 +129,15 @@ module BuildsHelper
 
   def highlight_test_count(log)
     log.gsub(/\d+ tests, \d+ assertions, \d+ failures, \d+ errors/, '<div class="test-results">\0</div>').
-        gsub(/\d+ examples, \d+ failures/, '<div class="test-results">\0</div>')
+        gsub(/\d+ examples, \d+ failures/, '<div class="test-results">\0</div>').html_safe
   end
 
   def strip_ansi_colors(log)
     log.gsub(/\e\[\d+m/, '')
   end
-  
+
   def convert_ansi_colors(log)
     AnsiColors.ansi_escaped(log).html_safe
   end
-  
+
 end
