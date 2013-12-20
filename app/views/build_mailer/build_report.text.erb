@@ -3,14 +3,7 @@
 
 CHANGES
 -------
-<%= raw @build.changeset %>
-
-<% unless @failures_and_errors.empty? -%>
-TEST FAILURES AND ERRORS
------------------------
-<%= @failures_and_errors %>
-
-<% end -%>
+<%= raw @build.changeset %><%= raw @failures_and_errors %>
 See <%= "#{@build.url}" %> for details.
 <% else -%>
 <%= @message %>

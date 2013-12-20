@@ -2,7 +2,7 @@
 # run and turn them into a more succinct error representation.
 class BuildLogParser
   TEST_FAILURE_REGEX = /^={2,}\nFailure\:(?:\s|\n)*?(\S.*?)\n(.*?)\n(.*?)\n={2,}/m
-  TEST_ERROR_REGEX = /^={2,}\nError\:\s+(\S+)\n(.*?)\n(.*?)\n={2,}/m
+  TEST_ERROR_REGEX = /^={2,}\nError\:\s+(\S+)\n\s+?(.*?)\n(.*?)\n={2,}/m
 
   RSPEC_ERROR_REGEX = /^(\S+) in '(.*)'\n((.*\n)+)/
   RSPEC_FAILURE_REGEX = /^'(.*)' FAILED\n((.+\n)+)/
@@ -21,10 +21,21 @@ class BuildLogParser
     test_errors + rspec_errors
   end
 
+  def fix_name(name)
+    name.match(/(.*?)\((.*?)\)/) do |match|
+      name = "#{match[2]}.#{match[1]}"
+    end
+    name
+  end
+
   def test_errors
     test_errors = []
     @log.scan(TEST_ERROR_REGEX) do |match|
-      test_errors << TestErrorEntry.create_error($1, $2, $3)
+      name = $1
+      message = $2
+      stacktrace = $3
+      name = fix_name(name)
+      test_errors << TestErrorEntry.create_error(name, message, stacktrace)
     end
     return test_errors
   end
@@ -51,7 +62,11 @@ class BuildLogParser
   def test_failures
     test_failures = []
     @log.scan(TEST_FAILURE_REGEX) do |match|
-      test_failures << TestErrorEntry.create_failure($2, $1, $3)
+      name = $2
+      message = $1
+      stacktrace = $3
+      name = fix_name(name)
+      test_failures << TestErrorEntry.create_failure(name, message, stacktrace)
     end
     test_failures
   end
