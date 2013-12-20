@@ -5,7 +5,7 @@ class BuildMailer < ActionMailer::Base
     @subject             = "[CruiseControl] #{subject}"
     @build               = build
     @message             = message
-    @failures_and_errors = parse_failures_and_errors(BuildLogParser.new(build.output).failures_and_errors)
+    @failures_and_errors = BuildLogParser.new(build.output).parsed_failures_and_errors
     @recipients          = recipients
     @from                = from
     @sent_on             = sent_at
@@ -34,27 +34,6 @@ class BuildMailer < ActionMailer::Base
     @sent_on             = sent_at
     @headers             = {}
     mail(:to => @recipients, :subject => @subject)
-  end
-
-  def parse_failures_and_errors(errors)
-    parsed = {}
-    message = ''
-    errors.each do |e|
-      e.type.downcase!
-      parsed[e.type] ||= []
-      parsed[e.type] << e
-    end
-
-    parsed.keys.sort.each do |k|
-      header = "TEST #{k.upcase}S"
-      message << [header, "-" * header.size].join("\n")
-      parsed[k].each do |e|
-
-        message << ["\n", "#{e.test_name}: #{e.message}", e.stacktrace].join("\n")
-      end
-      message << "\n\n"
-    end
-    message
   end
 
   def formatted_error(error)
