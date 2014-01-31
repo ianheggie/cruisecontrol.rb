@@ -1,0 +1,13 @@
+@import 'twitter/bootstrap/variables'
+
+@mixin xs
+  @media (min-width: 0px) and (max-width: $screen-xs-max) 
+    @content
+
+@mixin sm
+  @media (min-width: $screen-sm) and (max-width: $screen-sm-max) 
+    @content
+
+@mixin md
+  @media (min-width: $screen-md) and (max-width: $screen-md-max) 
+    @content

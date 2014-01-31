@@ -45,6 +45,9 @@ module CruiseControl
     config.autoload_paths << Rails.root.join('lib', 'builder_plugins').to_s
     config.autoload_paths << CruiseControl.data_root.join('builder_plugins').to_s
     
+    # Enable the asset pipeline
+    config.assets.enabled = true
+
     config.after_initialize do
       require Rails.root.join('config', 'configuration')
       
@@ -55,8 +58,6 @@ module CruiseControl
 
       BuilderPlugin.load_all
     end
-
-    config.action_view.javascript_expansions[:defaults] = ['rails', 'jquery', 'jquery_ujs']
   end
 end
 
