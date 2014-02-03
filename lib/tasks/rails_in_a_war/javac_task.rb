@@ -51,7 +51,7 @@ module RailsInAWar
 
     def create_classpath_file
       File.open(classpath_file, 'w') do |f|
-        f.puts(@classpath.flatten.sort.join(File::PATH_SEPARATOR))
+         f.puts(@classpath.flatten.sort.join(File::PATH_SEPARATOR))
       end
     end
     
