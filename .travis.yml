@@ -7,6 +7,9 @@ bundler_args: --no-color --without test
 script: "bundle exec rake"
 
 before_install:
+  # next 2 lines to work around "Could not find rake-0.9.2.2.gem for installation" error
+  - bundle install --system
+  - rvm use system
   - git config --global user.email "travis@example.com"
   - git config --global user.name "Travis CI test of cruisecontrolrb"
 
