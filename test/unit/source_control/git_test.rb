@@ -129,7 +129,12 @@ class SourceControl::GitTest < ActiveSupport::TestCase
   def test_clean_checkout_should_perform_git_clean
     in_sandbox do
       git = new_git(:repository => "git:/my_repo")
-      git.expects(:git).with("clean", ['-q', '-d', '-f'])
+      # usage: git clean [-d] [-f] [-n] [-q] [-e <pattern>] [-x | -X] [--] <paths>...
+      # -q, --quiet           do not print names of files removed
+      # -d                    remove whole directories
+      # -f, --force           force
+      # -x                    remove ignored files, too
+      git.expects(:git).with("clean", ['-q', '-d', '-x', '-f'])
       git.clean_checkout
     end
   end
@@ -159,8 +164,8 @@ class SourceControl::GitTest < ActiveSupport::TestCase
       end
       
       begin
-        old_timeout = Configuration.git_load_new_changesets_timeout
-        Configuration.git_load_new_changesets_timeout = 0.5.seconds
+        old_timeout = CruiseControl::Configuration.git_load_new_changesets_timeout
+        CruiseControl::Configuration.git_load_new_changesets_timeout = 0.5.seconds
 
         assert_raise(BuilderError) do
           begin
@@ -171,7 +176,7 @@ class SourceControl::GitTest < ActiveSupport::TestCase
           end
         end
       ensure
-        Configuration.git_load_new_changesets_timeout = old_timeout
+        CruiseControl::Configuration.git_load_new_changesets_timeout = old_timeout
       end
     end
   end

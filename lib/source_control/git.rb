@@ -24,7 +24,7 @@ module SourceControl
       # need to read from command output, because otherwise tests break
       git('clone', [@repository, checkout_path], :execute_in_project_directory => false)
 
-      if @branch and @branch != current_branch
+      if @branch and !@branch.empty? and @branch != current_branch
         git('branch', ['--track', @branch, "origin/#{@branch}"])
         git('checkout', ['-q', @branch]) # git prints 'Switched to branch "branch"' to stderr unless you pass -q 
       end
@@ -32,10 +32,17 @@ module SourceControl
     end
 
     def clean_checkout(revision = nil, stdout = $stdout)
-      # (-f) Forcing the clean incase git clean.requireForce is set to true
+      # (-f) Forcing the clean in case git clean.requireForce is set to true
+      # (-x) Remove untracked files including build products
       # (-d) Directory clean
       # (-q) Quiet, prevent git from writing unnecessary information to stdout/stderr 
-      git('clean', ['-q', '-d', '-f'])
+      git('clean', ['-q', '-d', '-x', '-f'])
+    end
+
+    def latest_commiter_email
+      load_new_changesets_from_origin
+      git_output = git('log', ['-1', '--pretty=format:%ce', "origin/#{current_branch}"])
+      git_output.to_s
     end
 
     def latest_revision
@@ -99,7 +106,7 @@ module SourceControl
       # NOTE: Git network problems may cause CruiseControl.rb to hang unless you install the system_timer gem.
       # See: https://cruisecontrolrb.lighthouseapp.com/projects/9150-cruise-control-rb/tickets/229-sometimes-git-hangs
       
-      MyTimer.timeout(Configuration.git_load_new_changesets_timeout.to_f) do
+      MyTimer.timeout(CruiseControl::Configuration.git_load_new_changesets_timeout.to_f) do
         git("fetch", ["origin"])
       end
     rescue Timeout::Error => e
