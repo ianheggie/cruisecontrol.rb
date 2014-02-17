@@ -12,7 +12,7 @@ gem "rake"
 gem "jquery-rails"
 gem "abstract"
 gem "xmpp4r"
-gem "puma"
+gem "puma", '< 2.7.0'  # 2.7.[01] breaks compatibility with ruby 1.8.7
 
 group :development do
   gem "rcov", '0.9.9', :platforms => [:ruby_18]
@@ -31,7 +31,7 @@ group :development do
 end
 
 group :test do
-  gem 'debugger', :platforms => :mri_19
+  gem 'debugger', :platforms => :mri_19 unless ENV['TRAVIS'] == 'true'
 end
 
 gem 'system_timer', :platforms => :ruby_18
