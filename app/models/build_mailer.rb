@@ -10,6 +10,19 @@ class BuildMailer < ActionMailer::Base
     @from                = from
     @sent_on             = sent_at
     @headers             = {}
+    mail(:to => @recipients, :subject => @subject, :from => @from)
+  end
+
+  def send_release_note(build, recipients, from, subject, message, sent_at = Time.now)
+    @subject             = "[CruiseControl][ReleaseNote] #{subject}"
+    @build               = build
+    @message             = message
+    @failures_and_errors = BuildLogParser.new(build.output).failures_and_errors.map { |e| formatted_error(e) }     
+    @recipients          = recipients
+    @from                = from
+    @sent_on             = sent_at
+    @headers             = {}
+    mail(:to => @recipients, :subject => @subject, :from => @from)
   end
 
   def test(recipients,  sent_at = Time.now)
@@ -20,6 +33,7 @@ class BuildMailer < ActionMailer::Base
     @recipients          = recipients
     @sent_on             = sent_at
     @headers             = {}
+    mail(:to => @recipients, :subject => @subject)
   end
 
   def formatted_error(error)

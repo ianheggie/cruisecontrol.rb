@@ -27,6 +27,10 @@ module ApplicationHelper
     DurationFormatter.new(total_seconds).send(format)
   end
   
+  def format_percent(percent, precision = 1)
+    "%0.#{precision}f" % percent.to_f
+  end
+  
   def setting_row(label, value, help = '&nbsp;')
     <<-EOL
     <tr>
@@ -76,7 +80,8 @@ module ApplicationHelper
   end
 
   def format_changeset_log(log)
-    h(log.strip)
+    log = "" if log.blank?
+    CGI.escapeHTML(log.strip)
   end
   
   def elapsed_time(build, format = :general)
